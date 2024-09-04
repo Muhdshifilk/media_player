@@ -24,7 +24,7 @@ function Landing() {
               autem non!
             </p>
             <div>
-              <Link to={"/home"} className="btn btn-outline-success w-100 ">
+              <Link to={"/login"} className="btn btn-outline-success w-100 ">
                 <b>Let's Go</b>
               </Link>
             </div>

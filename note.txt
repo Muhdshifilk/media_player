@@ -1,0 +1,11 @@
+=>State lifting:
+    technique for passing data from parent to child component
+
+=>react-toastify:
+    - for setting notifications easily
+    - npm i react-toastify to install
+
+Session storage and local Storage:
+---------------------------------------
+-Both are mostly similar storages provided by browser
+

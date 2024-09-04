@@ -3,21 +3,54 @@ import Card from 'react-bootstrap/Card';
 import { useState } from 'react';
 import Button from 'react-bootstrap/Button';
 import Modal from 'react-bootstrap/Modal';
+import {toast} from 'react-toastify'
+import { addHistory, deleteVideo } from '../services/allApis';
 
-function VideoCard() {
+function VideoCard({video,response,cat}) {
     const [show, setShow] = useState(false);
 
+    const handledelete=async(id)=>{
+      const res=await deleteVideo(video.id)
+      console.log(res);
+      if(res.status==200){
+        toast.success("Video Deleted")
+        response(res)
+      }else{
+        toast.error("Deletion Failed")
+      }
+      
+    }
+
+    const draghandler=(e)=>{
+      console.log(e) 
+      e.dataTransfer.setData("video",JSON.stringify(video))
+    }
+
     const handleClose = () => setShow(false);
-    const handleShow = () => setShow(true);
+    const handleShow =async() =>{
+       setShow(true)
+       const dt=new Date()
+       const data={videoId:video.videoId,title:video.title,url:video.videoUrl,datetime:dt}
+       console.log(data);
+       const result=await addHistory(data)
+       console.log(result);
+      };
+
+
   return (
     <>
-        <Card style={{ width: '18rem' }}>
-          <Card.Img style={{cursor:'pointer'}} onClick={handleShow} variant="top" src="https://i.ytimg.com/vi/xUe3eR0n380/maxresdefault.jpg" />
+        <Card className='mb-4' style={cat?{width:'100%'}:{width: '18rem' }} onDragStart={(e)=>draghandler(e)} draggable>
+          <Card.Img style={{cursor:'pointer'}} onClick={handleShow} variant="top" src={video?.imageUrl} />
           <Card.Body>
-            <Card.Title>Thoofan</Card.Title>
-            <Button variant="btn">
-                <i className="fa-solid fa-trash-can" style={{color: "#e60505"}} />
-            </Button>
+            <Card.Title>{video?.title}</Card.Title>
+            {
+              !cat &&
+              <>
+                <Button variant="btn" onClick={handledelete}>
+                  <i className="fa-solid fa-trash-can" style={{color: "#e60505"}} />
+                </Button>
+              </>
+            }
           </Card.Body>
         </Card>
 
@@ -29,10 +62,10 @@ function VideoCard() {
         keyboard={false}
       >
         <Modal.Header closeButton>
-          <Modal.Title>Thoofan</Modal.Title>
+          <Modal.Title>{video.title}</Modal.Title>
         </Modal.Header>
         <Modal.Body>
-        <iframe width="100%" height="315" src="https://www.youtube.com/embed/xUe3eR0n380?si=wtKYRrCYKoJdOGLp&autoplay=1" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+        <iframe width="100%" height="315" src={video?.videoUrl} title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
         </Modal.Body>
         <Modal.Footer>
           <Button variant="secondary" onClick={handleClose}>
